@@ -1,0 +1,84 @@
+<?php
+/**
+ * @file
+ * Test case for testing the cron example module.
+ */
+
+/**
+ * cull_users test class
+ *
+ * @ingroup cull_users
+ */
+class CullUsersTestCase extends DrupalWebTestCase {
+  protected $webUser;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Cron example functionality',
+      'description' => 'Test the functionality of the Cron Example.',
+      'group' => 'Examples',
+    );
+  }
+
+  /**
+   * Enable modules and create user with specific permissions.
+   */
+  public function setUp() {
+    parent::setUp('cull_users');
+    // Create user. Search content permission granted for the search block to
+    // be shown.
+    $this->webUser = $this->drupalCreateUser(array('administer site configuration'));
+    $this->drupalLogin($this->webUser);
+  }
+
+  /**
+   * Test running cron through the user interface.
+   */
+  public function testCullUsersBasic() {
+    // Pretend that cron has never been run (even though simpletest seems to
+    // run it once...)
+    variable_set('cull_users_next_execution', 0);
+    $this->drupalGet('examples/cull_users');
+
+    // Initial run should cause cull_users_cron() to fire.
+    $post = array();
+    $this->drupalPost('examples/cull_users', $post, t('Run cron now'));
+    $this->assertText(t('cull_users executed at'));
+
+    // Forcing should also cause cull_users_cron() to fire.
+    $post['cron_reset'] = TRUE;
+    $this->drupalPost(NULL, $post, t('Run cron now'));
+    $this->assertText(t('cull_users executed at'));
+
+    // But if followed immediately and not forced, it should not fire.
+    $post['cron_reset'] = FALSE;
+    $this->drupalPost(NULL, $post, t('Run cron now'));
+    $this->assertNoText(t('cull_users executed at'));
+
+    $this->assertText(t('There are currently 0 items in queue 1 and 0 items in queue 2'));
+    $post = array(
+      'num_items' => 5,
+      'queue' => 'cull_users_queue_1',
+    );
+    $this->drupalPost(NULL, $post, t('Add jobs to queue'));
+    $this->assertText('There are currently 5 items in queue 1 and 0 items in queue 2');
+    $post = array(
+      'num_items' => 100,
+      'queue' => 'cull_users_queue_2',
+    );
+    $this->drupalPost(NULL, $post, t('Add jobs to queue'));
+    $this->assertText('There are currently 5 items in queue 1 and 100 items in queue 2');
+
+    $post = array();
+    $this->drupalPost('examples/cull_users', $post, t('Run cron now'));
+    $this->assertPattern('/Queue 1 worker processed item with sequence 5 /');
+    $this->assertPattern('/Queue 2 worker processed item with sequence 100 /');
+  }
+}
+
+/**
+ * @} End of "addtogroup cull_users".
+ */
