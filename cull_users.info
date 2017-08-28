@@ -1,5 +1,6 @@
 name = Cull Users
 description = Periodically deletes users who have no special roles assigned
 package = Cornell University Library
+configure = admin/settings/cull_users
 core = 7.x
 files[] = cull_users.test
