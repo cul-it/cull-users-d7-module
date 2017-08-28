@@ -21,11 +21,12 @@
  */
 function cull_users_menu() {
 
-  $items['examples/cull_users'] = array(
-    'title' => 'Cron Example',
+  $items['admin/settings/cull_users'] = array(
+    'title' => 'Cull Users settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('cull_users_form'),
-    'access callback' => TRUE,
+    'access arguments' => array('administer cull_user settings'),
+    'type' => MENU_NORMAL_ITEM,
   );
 
   return $items;
