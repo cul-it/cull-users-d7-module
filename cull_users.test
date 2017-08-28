@@ -11,15 +11,17 @@
  */
 class CullUsersTestCase extends DrupalWebTestCase {
   protected $webUser;
+  protected $dummy_users;
+  protected $dummy_user_count = 7;
 
   /**
    * {@inheritdoc}
    */
   public static function getInfo() {
     return array(
-      'name' => 'Cron example functionality',
-      'description' => 'Test the functionality of the Cron Example.',
-      'group' => 'Examples',
+      'name' => 'Cull Users functionality',
+      'description' => 'Test the functionality of Cull Users.',
+      'group' => 'Cull Users',
     );
   }
 
@@ -32,6 +34,9 @@ class CullUsersTestCase extends DrupalWebTestCase {
     // be shown.
     $this->webUser = $this->drupalCreateUser(array('administer site configuration'));
     $this->drupalLogin($this->webUser);
+    for ($i=0; $i < $this->dummy_user_count; $i++) {
+      $user = $this->drupalCreateUser();
+    }
   }
 
   /**
