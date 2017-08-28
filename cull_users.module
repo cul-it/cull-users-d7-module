@@ -17,6 +17,17 @@
  */
 
 /**
+ * Implements hook_permission().
+ */
+function cull_users_permission() {
+  return array(
+    'administer cull_user settings' => array(
+      'title' => t('Administer settings for the Cull Users module'),
+    )
+  );
+}
+
+/**
  * Implements hook_menu().
  */
 function cull_users_menu() {
