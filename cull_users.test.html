@@ -58,24 +58,6 @@ class CullUsersTestCase extends DrupalWebTestCase {
     $this->drupalPost(NULL, $post, t('Run cron now'));
     $this->assertNoText(t('cull_users executed at'));
 
-    // $this->assertText(t('There are currently 0 items in queue 1 and 0 items in queue 2'));
-    // $post = array(
-    //   'num_items' => 5,
-    //   'queue' => 'cull_users_queue_1',
-    // );
-    // $this->drupalPost(NULL, $post, t('Add jobs to queue'));
-    // $this->assertText('There are currently 5 items in queue 1 and 0 items in queue 2');
-    // $post = array(
-    //   'num_items' => 100,
-    //   'queue' => 'cull_users_queue_2',
-    // );
-    // $this->drupalPost(NULL, $post, t('Add jobs to queue'));
-    // $this->assertText('There are currently 5 items in queue 1 and 100 items in queue 2');
-
-    // $post = array();
-    // $this->drupalPost('examples/cull_users', $post, t('Run cron now'));
-    // $this->assertPattern('/Queue 1 worker processed item with sequence 5 /');
-    // $this->assertPattern('/Queue 2 worker processed item with sequence 100 /');
   }
 }
 
