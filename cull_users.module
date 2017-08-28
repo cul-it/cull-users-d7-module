@@ -68,39 +68,39 @@ function cull_users_form($form, &$form_state) {
     );
   }
 
-  $form['cron_queue_setup'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Cron queue setup (for hook_cron_queue_info(), etc.)'),
-  );
-  $queue_1 = DrupalQueue::get('cull_users_queue_1');
-  $queue_2 = DrupalQueue::get('cull_users_queue_2');
-  $form['cron_queue_setup']['current_cron_queue_status'] = array(
-    '#markup' => '<div>' . t('There are currently %queue_1 items in queue 1 and %queue_2 items in queue 2',
-      array(
-        '%queue_1' => $queue_1->numberOfItems(),
-        '%queue_2' => $queue_2->numberOfItems(),
-      )) . '</div>',
-  );
-  $form['cron_queue_setup']['num_items'] = array(
-    '#type' => 'select',
-    '#title' => t('Number of items to add to queue'),
-    '#options' => drupal_map_assoc(array(1, 5, 10, 100, 1000)),
-    '#default_value' => 5,
-  );
-  $form['cron_queue_setup']['queue'] = array(
-    '#type' => 'radios',
-    '#title' => t('Queue to add items to'),
-    '#options' => array(
-      'cull_users_queue_1' => t('Queue 1'),
-      'cull_users_queue_2' => t('Queue 2'),
-    ),
-    '#default_value' => 'cull_users_queue_1',
-  );
-  $form['cron_queue_setup']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Add jobs to queue'),
-    '#submit' => array('cull_users_add_jobs_to_queue'),
-  );
+  // $form['cron_queue_setup'] = array(
+  //   '#type' => 'fieldset',
+  //   '#title' => t('Cron queue setup (for hook_cron_queue_info(), etc.)'),
+  // );
+  // $queue_1 = DrupalQueue::get('cull_users_queue_1');
+  // $queue_2 = DrupalQueue::get('cull_users_queue_2');
+  // $form['cron_queue_setup']['current_cron_queue_status'] = array(
+  //   '#markup' => '<div>' . t('There are currently %queue_1 items in queue 1 and %queue_2 items in queue 2',
+  //     array(
+  //       '%queue_1' => $queue_1->numberOfItems(),
+  //       '%queue_2' => $queue_2->numberOfItems(),
+  //     )) . '</div>',
+  // );
+  // $form['cron_queue_setup']['num_items'] = array(
+  //   '#type' => 'select',
+  //   '#title' => t('Number of items to add to queue'),
+  //   '#options' => drupal_map_assoc(array(1, 5, 10, 100, 1000)),
+  //   '#default_value' => 5,
+  // );
+  // $form['cron_queue_setup']['queue'] = array(
+  //   '#type' => 'radios',
+  //   '#title' => t('Queue to add items to'),
+  //   '#options' => array(
+  //     'cull_users_queue_1' => t('Queue 1'),
+  //     'cull_users_queue_2' => t('Queue 2'),
+  //   ),
+  //   '#default_value' => 'cull_users_queue_1',
+  // );
+  // $form['cron_queue_setup']['submit'] = array(
+  //   '#type' => 'submit',
+  //   '#value' => t('Add jobs to queue'),
+  //   '#submit' => array('cull_users_add_jobs_to_queue'),
+  // );
 
   $form['configuration'] = array(
     '#type' => 'fieldset',
@@ -141,21 +141,21 @@ function cull_users_form_cron_run_submit($form, &$form_state) {
   }
 }
 
-/**
- * Submit function used to add the items to the queue.
- */
-function cull_users_add_jobs_to_queue($form, &$form_state) {
-  $queue = $form_state['values']['queue'];
-  $num_items = $form_state['values']['num_items'];
+// /**
+//  * Submit function used to add the items to the queue.
+//  */
+// function cull_users_add_jobs_to_queue($form, &$form_state) {
+//   $queue = $form_state['values']['queue'];
+//   $num_items = $form_state['values']['num_items'];
 
-  $queue = DrupalQueue::get($queue);
-  for ($i = 1; $i <= $num_items; $i++) {
-    $item = new stdClass();
-    $item->created = time();
-    $item->sequence = $i;
-    $queue->createItem($item);
-  }
-}
+//   $queue = DrupalQueue::get($queue);
+//   for ($i = 1; $i <= $num_items; $i++) {
+//     $item = new stdClass();
+//     $item->created = time();
+//     $item->sequence = $i;
+//     $queue->createItem($item);
+//   }
+// }
 /**
  * Implements hook_cron().
  *
@@ -186,80 +186,80 @@ function cull_users_cron() {
 }
 
 
-/**
- * Implements hook_cron_queue_info().
- *
- * hook_cron_queue_info() and family are new since Drupal 7, and allow any
- * process to add work to the queue to be acted on when cron runs. Queues are
- * described and worker callbacks are provided, and then only the worker
- * callback needs to be implemented.
- *
- * All the details of queue use are done by the cron_queue implementation, so
- * one doesn't need to know much about DrupalQueue().
- *
- * @see queue_example.module
- */
-function cull_users_cron_queue_info() {
-  $queues['cull_users_queue_1'] = array(
-    'worker callback' => 'cull_users_queue_1_worker',
-    // One second max runtime per cron run.
-    'time' => 1,
-  );
-  $queues['cull_users_queue_2'] = array(
-    'worker callback' => 'cull_users_queue_2_worker',
-    'time' => 10,
-  );
-  return $queues;
-}
+// /**
+//  * Implements hook_cron_queue_info().
+//  *
+//  * hook_cron_queue_info() and family are new since Drupal 7, and allow any
+//  * process to add work to the queue to be acted on when cron runs. Queues are
+//  * described and worker callbacks are provided, and then only the worker
+//  * callback needs to be implemented.
+//  *
+//  * All the details of queue use are done by the cron_queue implementation, so
+//  * one doesn't need to know much about DrupalQueue().
+//  *
+//  * @see queue_example.module
+//  */
+// function cull_users_cron_queue_info() {
+//   $queues['cull_users_queue_1'] = array(
+//     'worker callback' => 'cull_users_queue_1_worker',
+//     // One second max runtime per cron run.
+//     'time' => 1,
+//   );
+//   $queues['cull_users_queue_2'] = array(
+//     'worker callback' => 'cull_users_queue_2_worker',
+//     'time' => 10,
+//   );
+//   return $queues;
+// }
 
-/**
- * Simple worker for our queues.
- *
- * @param object $item
- *   Any object to be worked on.
- */
-function cull_users_queue_1_worker($item) {
-  cull_users_queue_report_work(1, $item);
-}
+// /**
+//  * Simple worker for our queues.
+//  *
+//  * @param object $item
+//  *   Any object to be worked on.
+//  */
+// function cull_users_queue_1_worker($item) {
+//   cull_users_queue_report_work(1, $item);
+// }
 
-/**
- * Simple worker for our queues.
- *
- * @param object $item
- *   Any object to be worked on.
- */
-function cull_users_queue_2_worker($item) {
-  cull_users_queue_report_work(2, $item);
-}
+// /**
+//  * Simple worker for our queues.
+//  *
+//  * @param object $item
+//  *   Any object to be worked on.
+//  */
+// function cull_users_queue_2_worker($item) {
+//   cull_users_queue_report_work(2, $item);
+// }
 
-/**
- * Simple reporter for the workers.
- *
- * @param int $worker
- *   Worker number.
- * @param object $item
- *   The $item which was stored in the cron queue.
- */
-function cull_users_queue_report_work($worker, $item) {
-  if (!empty($GLOBALS['cull_users_show_status_message'])) {
-    drupal_set_message(
-      t('Queue @worker worker processed item with sequence @sequence created at @time',
-        array(
-          '@worker' => $worker,
-          '@sequence' => $item->sequence,
-          '@time' => date_iso8601($item->created),
-        )
-      )
-    );
-  }
-  watchdog('cull_users', 'Queue @worker worker processed item with sequence @sequence created at @time',
-    array(
-      '@worker' => $worker,
-      '@sequence' => $item->sequence,
-      '@time' => date_iso8601($item->created),
-    )
-  );
-}
+// /**
+//  * Simple reporter for the workers.
+//  *
+//  * @param int $worker
+//  *   Worker number.
+//  * @param object $item
+//  *   The $item which was stored in the cron queue.
+//  */
+// function cull_users_queue_report_work($worker, $item) {
+//   if (!empty($GLOBALS['cull_users_show_status_message'])) {
+//     drupal_set_message(
+//       t('Queue @worker worker processed item with sequence @sequence created at @time',
+//         array(
+//           '@worker' => $worker,
+//           '@sequence' => $item->sequence,
+//           '@time' => date_iso8601($item->created),
+//         )
+//       )
+//     );
+//   }
+//   watchdog('cull_users', 'Queue @worker worker processed item with sequence @sequence created at @time',
+//     array(
+//       '@worker' => $worker,
+//       '@sequence' => $item->sequence,
+//       '@time' => date_iso8601($item->created),
+//     )
+//   );
+// }
 
 /**
  * @} End of "defgroup cull_users".
