@@ -126,10 +126,19 @@ function cull_users_cron() {
   // We usually don't want to act every time cron runs (which could be every
   // minute) so keep a time for the next run in a variable.
   if (time() >= variable_get('cull_users_next_execution', 0)) {
-    // This is a silly example of a cron job.
-    // It just makes it obvious that the job has run without
-    // making any changes to your database.
-    watchdog('cull_users', 'cull_users ran');
+
+    // find active users who have no roles assigned
+    $users_to_delete = db_query("select users.uid from users
+      LEFT JOIN users_roles on users.uid = users_roles.uid
+      where users.uid > 1 AND users.status <> 0 AND users_roles.rid IS NULL");
+    // delete these users
+    $deleted = 0;
+    foreach($users_to_delete as $user) {
+      user_delete($user->uid);
+      $deleted++;
+    }
+
+    watchdog('cull_users', 'cull_users deleted %deleted users', array('%deleted' => $deleted));
     if (!empty($GLOBALS['cull_users_show_status_message'])) {
       drupal_set_message(t('cull_users executed at %time', array('%time' => date_iso8601(time(0)))));
     }
