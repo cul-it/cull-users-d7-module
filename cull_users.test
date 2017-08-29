@@ -46,11 +46,11 @@ class CullUsersTestCase extends DrupalWebTestCase {
     // Pretend that cron has never been run (even though simpletest seems to
     // run it once...)
     variable_set('cull_users_next_execution', 0);
-    $this->drupalGet('examples/cull_users');
+    $this->drupalGet('admin/settings/cull_users');
 
     // Initial run should cause cull_users_cron() to fire.
     $post = array();
-    $this->drupalPost('examples/cull_users', $post, t('Run cron now'));
+    $this->drupalPost('admin/settings/cull_users', $post, t('Run cron now'));
     $this->assertText(t('cull_users executed at'));
 
     // Forcing should also cause cull_users_cron() to fire.
