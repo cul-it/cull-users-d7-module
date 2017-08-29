@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Test case for testing the cron example module.
+ * Test case for testing the cull_users module.
  */
 
 /**
@@ -32,10 +32,11 @@ class CullUsersTestCase extends DrupalWebTestCase {
     parent::setUp('cull_users');
     // Create user. Search content permission granted for the search block to
     // be shown.
-    $this->webUser = $this->drupalCreateUser(array('administer site configuration'));
+    $this->webUser = $this->drupalCreateUser(array('administer cull_user settings', 'administer site configuration'));
     $this->drupalLogin($this->webUser);
     for ($i=0; $i < $this->dummy_user_count; $i++) {
-      $user = $this->drupalCreateUser();
+      $a_user = $this->drupalCreateUser();
+      $this->dummy_users[] = $a_user->name;
     }
   }
 
@@ -45,12 +46,13 @@ class CullUsersTestCase extends DrupalWebTestCase {
   public function testCullUsersBasic() {
     // Pretend that cron has never been run (even though simpletest seems to
     // run it once...)
+    $this->error('Testing error function.', 'cul_error');
     variable_set('cull_users_next_execution', 0);
-    $this->drupalGet('examples/cull_users');
+    $this->drupalGet('admin/settings/cull_users');
 
     // Initial run should cause cull_users_cron() to fire.
     $post = array();
-    $this->drupalPost('examples/cull_users', $post, t('Run cron now'));
+    $this->drupalPost('admin/settings/cull_users', $post, t('Run cron now'));
     $this->assertText(t('cull_users executed at'));
 
     // Forcing should also cause cull_users_cron() to fire.
@@ -62,6 +64,12 @@ class CullUsersTestCase extends DrupalWebTestCase {
     $post['cron_reset'] = FALSE;
     $this->drupalPost(NULL, $post, t('Run cron now'));
     $this->assertNoText(t('cull_users executed at'));
+
+    // should not be any dummy users after cron runs
+    for ($i=0; $i < $this->dummy_user_count; $i++) {
+      $dummy = user_load_by_name($this->dummy_users[$i]);
+      $this->assertFalse($dummy);
+    }
 
   }
 }
