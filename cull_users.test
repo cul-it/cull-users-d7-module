@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Test case for testing the cron example module.
+ * Test case for testing the cull_users module.
  */
 
 /**

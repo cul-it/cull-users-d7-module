@@ -2,18 +2,7 @@
 
 /**
  * @file
- * Demonstrates use of the Cron API in Drupal - hook_cron()
- */
-
-/**
- * @defgroup cull_users Example: Cron
- * @ingroup examples
- * @{
- * Example using Cron API, including hook_cron() and hook_cron_queue_info().
- *
- * This example is part of the Examples for Developers Project
- * which you can download and experiment with at
- * http://drupal.org/project/examples
+ * Delete users without roles - hook_cron()
  */
 
 /**
