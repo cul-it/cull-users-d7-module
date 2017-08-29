@@ -46,6 +46,7 @@ class CullUsersTestCase extends DrupalWebTestCase {
   public function testCullUsersBasic() {
     // Pretend that cron has never been run (even though simpletest seems to
     // run it once...)
+    $this->error('Testing error function.', 'cul_error');
     variable_set('cull_users_next_execution', 0);
     $this->drupalGet('admin/settings/cull_users');
 
