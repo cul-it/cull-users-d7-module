@@ -35,7 +35,8 @@ class CullUsersTestCase extends DrupalWebTestCase {
     $this->webUser = $this->drupalCreateUser(array('administer cull_user settings', 'administer site configuration'));
     $this->drupalLogin($this->webUser);
     for ($i=0; $i < $this->dummy_user_count; $i++) {
-      $user = $this->drupalCreateUser();
+      $a_user = $this->drupalCreateUser();
+      $this->dummy_users[] = $a_user->name;
     }
   }
 
@@ -62,6 +63,12 @@ class CullUsersTestCase extends DrupalWebTestCase {
     $post['cron_reset'] = FALSE;
     $this->drupalPost(NULL, $post, t('Run cron now'));
     $this->assertNoText(t('cull_users executed at'));
+
+    // should not be any dummy users after cron runs
+    for ($i=0; $i < $this->dummy_user_count; $i++) {
+      $dummy = user_load_by_name($this->dummy_users[$i]);
+      $this->assertFalse($dummy);
+    }
 
   }
 }
