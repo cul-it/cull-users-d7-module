@@ -85,6 +85,11 @@ function cull_users_form($form, &$form_state) {
       60 * 60 * 24 => t('1 day'),
     ),
   );
+  $form['configuration']['cull_users_ignore_interval'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Ignore this cron interval (good for Elysia Cron users).'),
+    '#default_value' => variable_get('cull_users_ignore_interval', 0),
+    );
 
   return system_settings_form($form);
 }
@@ -108,7 +113,6 @@ function cull_users_form_cron_run_submit($form, &$form_state) {
   }
 }
 
-
 /**
  * Implements hook_cron().
  *
@@ -124,9 +128,10 @@ function cull_users_cron() {
   // Default to an hourly interval. Of course, cron has to be running at least
   // hourly for this to work.
   $interval = variable_get('cull_users_interval', 60 * 60);
+  $ignore = variable_get('cull_users_ignore_interval', 0);
   // We usually don't want to act every time cron runs (which could be every
   // minute) so keep a time for the next run in a variable.
-  if (time() >= variable_get('cull_users_next_execution', 0)) {
+  if (($ignore != 0) || time() >= variable_get('cull_users_next_execution', 0)) {
 
     // find active users who have no roles assigned
     $users_to_delete = db_query("select users.uid from users
