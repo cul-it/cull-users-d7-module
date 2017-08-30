@@ -85,6 +85,11 @@ function cull_users_form($form, &$form_state) {
       60 * 60 * 24 => t('1 day'),
     ),
   );
+  $form['configuration']['cull_users_ignore_interval'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Ignore this cron interval (good for Elysia Cron users).'),
+    '#default_value' => variable_get('cull_users_ignore_interval', 0),
+    );
 
   return system_settings_form($form);
 }
@@ -107,7 +112,6 @@ function cull_users_form_cron_run_submit($form, &$form_state) {
     drupal_set_message(t('Cron run failed.'), 'error');
   }
 }
-
 
 /**
  * Implements hook_cron().
